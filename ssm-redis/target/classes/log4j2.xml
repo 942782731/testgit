@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="warn" monitorInterval="30">
+     <!-- 通过Properties标签定义该配置文件需要使用的属性数据 -->
+     <properties>
+        <property name="log_path">./logs</property>
+     </properties>
+     <!--先定义所有的appender追加器: 控制台追加器 和 文件追加器两大类 -->
+     <appenders>
+         <!--这个输出控制台的配置-->
+         <console name="myConsle" target="SYSTEM_ERR">
+             <!--输出日志的格式-->
+             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+         </console>
+         <!-- 配置文件追加器 -->
+         <file name="myLogFile" fileName="${log_path}/test.log" append="true">
+             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} --- [%p] --- %l --- %M --- %m %n"/>
+         </file>
+         <RollingFile name="myRollingFileDebug"
+             fileName="${log_path}/mylogs/debug.log"
+             filePattern="${log_path}/mylogs/${date:yyyy-MM}/debug-%d{yyyy-MM-dd}-%i.log">   
+             <Filters>
+                <LevelRangeFilter minLevel="error" maxLevel="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+             </Filters>
+             <PatternLayout pattern="[%d{yy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+             <Policies>
+                 <TimeBasedTriggeringPolicy interval="1"/>
+                 <SizeBasedTriggeringPolicy size="5KB"/>
+             </Policies>
+         </RollingFile>
+     </appenders>
+	 <loggers>
+         <root level="debug">
+            <appender-ref ref="myConsle"/>
+            <appender-ref ref="myLogFile"></appender-ref>
+            <appender-ref ref="myRollingFileDebug"></appender-ref>
+         </root>
+     </loggers>
+ </configuration>

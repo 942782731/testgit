@@ -1,0 +1,6 @@
+SSM整合单机redis
+	1).导入需要的jar包依赖
+		spring-data-redis
+		jedis
+	2).在业务代码中使用redis缓存
+	3).配置redis整合的配置文件

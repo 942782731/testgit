@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/data/jpa
+		http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+	<!-- 导入外部properties属性配置文件 -->
+	<context:property-placeholder location="classpath:data.properties"/>
+	<!-- 导入外部redis-contex.xml配置文件 -->
+	<import resource="classpath:redis-context.xml"/>
+	<!-- 配置一个会话工厂 -->
+	<bean name="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="typeAliasesPackage" value="com.jbit.ischool.pojo"></property>
+		<!-- 导入mybaties核心配置文件 -->
+		<property name="configLocation" value="classpath:mybatis.xml"></property>
+	</bean>
+	<!-- 配置druid数据源 -->
+	<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="driverClassName" value="${ssm.driver}"></property>
+		<property name="url" value="${ssm.url}"></property>
+		<property name="username" value="${ssm.user}"></property>
+		<property name="password" value="${ssm.pass}"></property>
+	</bean>
+	<!-- 扫描映射器bean -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+		<property name="basePackage" value="com.jbit.ischool.mapper"></property>
+	</bean>
+	<!-- 配置事务管理器 -->
+	<bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<!-- 扫描注解 -->
+	<context:component-scan base-package="com.jbit"></context:component-scan>
+</beans>

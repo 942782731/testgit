@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/data/jpa
+		http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+	<!-- 1.配置redisTemplate模型 -->
+	<bean name="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="connectionFactory"></property>
+		<property name="keySerializer">
+			<bean class="org.springframework.data.redis.serializer.StringRedisSerializer"></bean>
+		</property>
+		<property name="valueSerializer">
+			<bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer"></bean>
+		</property>
+	</bean>
+	
+	<!-- 2.配置模型对应依赖的连接工厂对象 -->
+	 
+	<bean name="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<property name="database" value="${redis.dbIndex}"></property>
+		<property name="poolConfig" ref="jedisPoolConfig"></property>
+		<property name="hostName" value="${redis.host}"></property>
+		<property name="port" value="${redis.port}"></property>
+		<property name="timeout" value="${redis.timeout}"></property>
+	</bean>
+	
+	<!--  
+	<bean name="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		 通过构造注入redis集群配置对象 
+		<constructor-arg name="clusterConfig" ref="clusterConfig"></constructor-arg>
+		 通过set注入配置redis连接池 
+		<property name="poolConfig" ref="jedisPoolConfig"></property>
+		<property name="timeout" value="${redis.timeout}" ></property>
+	</bean>
+	 配置redis集群配置对象 
+	<bean name="clusterConfig" class="org.springframework.data.redis.connection.RedisClusterConfiguration">
+		<property name="maxRedirects" value="6"></property>
+		<property name="clusterNodes">
+			<set>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.cluster.host1}"></constructor-arg>
+					<constructor-arg name="port" value="${redis.cluster.port1}"></constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.cluster.host2}"></constructor-arg>
+					<constructor-arg name="port" value="${redis.cluster.port2}"></constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.cluster.host3}"></constructor-arg>
+					<constructor-arg name="port" value="${redis.cluster.port3}"></constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.cluster.host4}"></constructor-arg>
+					<constructor-arg name="port" value="${redis.cluster.port4}"></constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.cluster.host5}"></constructor-arg>
+					<constructor-arg name="port" value="${redis.cluster.port5}"></constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.cluster.host6}"></constructor-arg>
+					<constructor-arg name="port" value="${redis.cluster.port6}"></constructor-arg>
+				</bean>
+			</set>
+		</property>
+	</bean>
+	-->
+	<!-- 3.配置连接工厂依赖redis连接池对象 -->
+	
+	<bean name="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxIdle" value="${redis.maxIdle}"></property>
+		<property name="maxTotal" value="${redis.maxTotal}"></property>
+		<property name="maxWaitMillis" value="${redis.maxWait}"></property>
+		<property name="testOnBorrow" value="${redis.testOnBorrow}"></property>
+		<property name="testOnReturn" value="${redis.testOnReturn}"></property>
+	</bean>
+</beans>

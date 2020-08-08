@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="static/js/jquery-1.8.3.js"></script>
+<script type="text/javascript">
+	$(function(){
+		//避免用连续多次点击同一个按钮发送多次请求 
+		//1.点击发送请求之前设置判断条件
+		//2.点击一次发送了请求就设置按钮禁用,再ajax请求响应成功之后再启用按钮的功能 
+		var tag = true;
+		$("[name=findStudents]").click(function(){
+			//2.发送ajax请求
+			if(tag == true){
+				//将tag重置为false
+				tag = false;
+				$.ajax({
+					"url":"stu/findStudents",
+					"type":"get",
+					"dataType":"json",
+					"success":function(result){
+						console.log(result);
+						//响应成功之后再次重置tag为true
+						tag = true;
+					},
+					"error":function(){
+						alert("error!");
+					}
+				});
+			}
+		});
+	});
+</script>
+</head>
+<body>
+	<button name="findStudents">查询所有学生</button>
+</body>
+</html>
